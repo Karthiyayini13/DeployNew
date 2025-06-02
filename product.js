@@ -16,8 +16,17 @@ const crypto = require('crypto');//inbuilt function to embed the data in this we
 const app = express();
 const PORT = 3001;
 
+
+app.use(cors({
+  origin: 'http;//localhost:3000/',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 //Middlewares
-app.use(cors());
+// app.use(cors());
+
+// app.use('/verify',require('./LoginMain'))
 app.use(bodyParser.json());
 app.use("/images", express.static(path.join(__dirname, "../first-app/public/images")));
 
@@ -53,6 +62,12 @@ app.post('/upload', upload.single('image'), (req, res) => {
     res.json({ imageUrl: imageUrl }); // OR use full URL: `http://localhost:3001/images/${req.file.filename}`
 });
 
+
+//LOGIN MAIN AND VERIFY MAIN CONNECTION
+
+
+app.use('/loginMain',require('./LoginMain'));
+app.use('/verifyMain',require('./VerifyMain'));
 
 
 
@@ -1005,7 +1020,7 @@ app.delete('/cart/clear/:userId', async (req, res) => {
 
 
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+// });
 

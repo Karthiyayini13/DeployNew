@@ -5,7 +5,7 @@
 // const mongoose = require('mongoose');
 // const bcyrypt = require('bcryptjs');
 
-// const app = express();
+// const router = express();
 // const port = process.env.PORT || 3500;
 
 // // MongoDB connection
@@ -172,7 +172,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcyrypt = require('bcryptjs');
 
-const app = express();
+// const app = express();
+const router = express.Router()
 const port = process.env.PORT || 3500;
 
 // MongoDB connection
@@ -190,19 +191,19 @@ const UserSchema = new mongoose.Schema(
 );
 const User = mongoose.model("User", UserSchema)
 
-app.use(bodyParser.json());
-app.use(cors());
+router.use(bodyParser.json());
+router.use(cors());
 
 
 const otpStore = {}; // Store OTPs temporarily
 
 // Root endpoint
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
     res.send('Welcome to Email OTP Verification API');
 });
 
 // Check if user exists
-app.post('/check-user', async (req, res) => {
+router.post('/check-user', async (req, res) => {
   const { email,phone } = req.body;
   try {
     // const user = await User.findOne({ UserEmail:email });
@@ -225,7 +226,7 @@ app.post('/check-user', async (req, res) => {
 
 
 // Add this new endpoint to your backend
-app.post('/check-user-exists', async (req, res) => {
+router.post('/check-user-exists', async (req, res) => {
     const { email, phone } = req.body;
     
     try {
@@ -242,7 +243,7 @@ app.post('/check-user-exists', async (req, res) => {
 });
 
 // // Create new user
-// app.post('/create-user', async (req, res) => {
+// router.post('/create-user', async (req, res) => {
 //   const { userName, userEmail, userPhone } = req.body;
   
 //   try {
@@ -272,7 +273,7 @@ app.post('/check-user-exists', async (req, res) => {
 
 
 // Create new user
-app.post('/create-user', async (req, res) => {
+router.post('/create-user', async (req, res) => {
     const { userName, userEmail, userPhone } = req.body;
     
     try {
@@ -327,7 +328,7 @@ app.post('/create-user', async (req, res) => {
 });
 
 // // **Send Email OTP**
-// app.post('/send-email', async (req, res) => {
+// router.post('/send-email', async (req, res) => {
 //     const { email } = req.body;
 //     if (!email) {
 //         return res.status(400).json({ success: false, message: "Email is required" });
@@ -344,7 +345,7 @@ app.post('/create-user', async (req, res) => {
 //         service: 'gmail',
 //         auth: {
 //             user: 'ihtark5@gmail.com',
-//             pass: 'tthr usdb xnzq qbgc' // Use App Password (Not your actual Gmail password)
+//             pass: 'tthr usdb xnzq qbgc' // Use router Password (Not your actual Gmail password)
 //         }
 //     });
 
@@ -369,7 +370,7 @@ app.post('/create-user', async (req, res) => {
 // });
 
 // // **Verify Email OTP**
-// app.post('/verify-email-otp',async (req, res) => {
+// router.post('/verify-email-otp',async (req, res) => {
 //     const { email, otp } = req.body;
 
 //     if (!email || !otp) {
@@ -396,7 +397,7 @@ app.post('/create-user', async (req, res) => {
 
 
 // Send OTP (works for both email and phone)
-app.post('/send-otp', async (req, res) => {
+router.post('/send-otp', async (req, res) => {
     const { email, phone } = req.body;
     
     if (!email && !phone) {
@@ -437,14 +438,14 @@ app.post('/send-otp', async (req, res) => {
             res.json({ success: true, message: "OTP sent to email" });
         });
     } else if (phone) {
-        // In a real app, integrate with SMS service like Twilio here
+        // In a real router, integrate with SMS service like Twilio here
         console.log(`OTP for ${phone}: ${otp}`); // For development only
         res.json({ success: true, message: "OTP sent to phone" });
     }
 });
 
 // Verify OTP
-app.post('/verify-otp', async (req, res) => {
+router.post('/verify-otp', async (req, res) => {
     const { email, phone, otp } = req.body;
     const otpKey = email || phone;
 
@@ -492,6 +493,6 @@ app.post('/verify-otp', async (req, res) => {
 
 
 // **Start the server**
-app.listen(port, () => {
+router.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

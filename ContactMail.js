@@ -5,7 +5,7 @@
 // const twilio = require("twilio");
 // require("dotenv").config(); // Use .env for security
 
-// const app = express();
+// const router = express();
 // const PORT = process.env.PORT || 4000;
 
 // app.use(bodyParser.json());
@@ -125,9 +125,10 @@ const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 require('dotenv').config();
 
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
+// const app = express();
+const router = express.Router()
+router.use(bodyParser.json());
+router.use(cors());
 
 // Twilio Credentials
 const accountSid = "ACb93aa441cd1479351f2bb79c9d2249ab";
@@ -141,7 +142,7 @@ const otpStore = {};
 const generateOtp = () => Math.floor(1000 + Math.random() * 9000);
 
 // **Send OTP**
-app.post('/send-otp', async (req, res) => {
+router.post('/send-otp', async (req, res) => {
     const { contact } = req.body;
 
     if (!contact) {
@@ -193,7 +194,7 @@ app.post('/send-otp', async (req, res) => {
 });
 
 // **Verify OTP**
-// app.post('/verify-otp', (req, res) => {
+// router.post('/verify-otp', (req, res) => {
 //     const { contact, otp } = req.body;
 
 //     if (!otpStore[contact] || otpStore[contact].otp.toString() !== otp.toString()) {
@@ -204,7 +205,7 @@ app.post('/send-otp', async (req, res) => {
 //     res.status(200).json({ success: true, verified: true, message: "OTP verified" });
 // });
 
-app.post('/verify-otp', (req, res) => {
+router.post('/verify-otp', (req, res) => {
     const { contact, otp } = req.body;
     
     if (!otpStore[contact]) {
@@ -227,4 +228,4 @@ app.post('/verify-otp', (req, res) => {
 });
 
 
-app.listen(3500, () => console.log("Server running on port 3500"));
+router.listen(3500, () => console.log("Server running on port 3500"));

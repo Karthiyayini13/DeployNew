@@ -6,15 +6,16 @@ require('dotenv').config(); // Load API keys securely
 const accountSid = "ACb93aa441cd1479351f2bb79c9d2249ab"; // Store these in .env
 const authToken = "c309afe5ed872fb273885285e3337e23";
 const client = require('twilio')(process.env.TWILIO_ID, process.env.TWILIO_TOKEN);
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
+// const app = express();
+const router = express.Router()
+router.use(bodyParser.json());
+router.use(cors());
 
 
 const otpStore = {}; // Store OTPs temporarily
 
 // **Send OTP**
-app.post('/send-otp', async (req, res) => {
+router.post('/send-otp', async (req, res) => {
     const { phone } = req.body;
 
     if (!phone || !phone.startsWith('+')) {
@@ -46,7 +47,7 @@ app.post('/send-otp', async (req, res) => {
 });
 
 // **Verify OTP**
-app.post('/verify-otp', (req, res) => {
+router.post('/verify-otp', (req, res) => {
     const { phone, otp } = req.body;
 
     if (!phone || !otp) {
@@ -66,9 +67,9 @@ app.post('/verify-otp', (req, res) => {
     }
 });
 
-// **Start Server**
-const PORT = 4003;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// // **Start Server**
+// const PORT = 4003;
+// router.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+// });
 
