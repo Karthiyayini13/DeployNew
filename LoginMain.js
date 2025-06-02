@@ -177,7 +177,7 @@ const router = express.Router()
 const port = process.env.PORT || 3500;
 
 // MongoDB connection
-mongoose.connect('mongodb://127.0.0.1:27017/userLoginDetails');
+// mongoose.connect('mongodb://127.0.0.1:27017/userLoginDetails');
 // mongoose.connect('mongodb://localhost:27017/auth_demo');
 
 //USER LOGIN DETAILS ARE STORED IN THIS COLLECTION / DATBASE
