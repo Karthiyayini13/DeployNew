@@ -242,36 +242,6 @@ router.post('/check-user-exists', async (req, res) => {
     }
 });
 
-// // Create new user
-// router.post('/create-user', async (req, res) => {
-//   const { userName, userEmail, userPhone } = req.body;
-  
-//   try {
-//     // Check if user already exists
-//     const existingUser = await User.findOne({UserEmail: userEmail });
-//     if (existingUser) {
-//       return res.status(400).json({ error: 'User already exists' });
-//     }
-
-//     // Create new user
-//     const newUser = new User({ 
-        
-//  UserName: userName,
-//       UserEmail: userEmail,
-//       UserPhone: userPhone
-
-//     });
-//     await newUser.save();
-    
-//     res.json({ success: true, user: newUser });
-//   } catch (err) {
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
-
-
-
-
 // Create new user
 router.post('/create-user', async (req, res) => {
     const { userName, userEmail, userPhone } = req.body;
@@ -326,75 +296,6 @@ router.post('/create-user', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-
-// // **Send Email OTP**
-// router.post('/send-email', async (req, res) => {
-//     const { email } = req.body;
-//     if (!email) {
-//         return res.status(400).json({ success: false, message: "Email is required" });
-//     }
-
-//     // Generate 4-digit OTP
-//   //  const otp = Math.floor(100000 + Math.random() * 900000); //6 digit OTP
-//     const otp = Math.floor(1000 + Math.random() * 9000);  //4 digit OTP
-
-//     otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 }; // OTP expires in 5 minutes
-
-//     // Configure email transporter
-//     const transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: 'ihtark5@gmail.com',
-//             pass: 'tthr usdb xnzq qbgc' // Use router Password (Not your actual Gmail password)
-//         }
-//     });
-
-
-//     // Email content
-//     const mailOptions = {
-//         from: 'ihtark5@gmail.com',
-//         to: email,
-//         subject: 'Your OTP for Email Verification',
-//         text: `Hello,\n\nYour OTP for email verification is: ${otp}\n\nThis OTP is valid for 5 minutes.\n\nBest regards,\n Adinn Outdoors`
-//     };
-
-//     // Send email
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//             console.error(error);
-//             return res.status(500).json({ success: false, message: "Failed to send OTP email" });
-//         }
-//         console.log(`Email sent: ${info.response}`);
-//         res.status(200).json({ success: true, message: "OTP sent successfully" });
-//     });
-// });
-
-// // **Verify Email OTP**
-// router.post('/verify-email-otp',async (req, res) => {
-//     const { email, otp } = req.body;
-
-//     if (!email || !otp) {
-//         return res.status(400).json({ success: false, message: "Email and OTP are required" });
-//     }
-
-//     const storedData = otpStore[email];
-//     if (!storedData || Date.now() > storedData.expiresAt) {
-//         return res.status(400).json({ success: false, message: "OTP expired or not found" });
-//     }
-//     console.log("Stored OTP:", storedData.otp, "Received OTP:", otp); // Debugging log
-//     if (otp.toString() === storedData.otp.toString()) 
-//       {
-//         delete otpStore[email]; // Remove OTP after successful verification
-//  // Check if user exists in database
-//         const user = await UserDetails.findOne({ email });
-
-//         return res.status(200).json({ success: true, verified: true,            userExists: !!user,
-//  message: "OTP verified successfully" });
-//     } else {
-//         return res.status(400).json({ success: false, verified: false, message: "Invalid OTP" });
-//     }
-// });
-
 
 // Send OTP (works for both email and phone)
 router.post('/send-otp', async (req, res) => {
@@ -492,7 +393,10 @@ router.post('/verify-otp', async (req, res) => {
 });
 
 
-// **Start the server**
-router.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+// At the end of LoginMain.js and VerifyMain.js
+module.exports = router;
+
+// // **Start the server**
+// router.listen(port, () => {
+//     console.log(`Server is running on port ${port}`);
+// });

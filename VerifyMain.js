@@ -67,6 +67,10 @@ router.post('/verify-otp', (req, res) => {
     }
 });
 
+
+// At the end of LoginMain.js and VerifyMain.js
+module.exports = router;
+
 // // **Start Server**
 // const PORT = 4003;
 // router.listen(PORT, () => {

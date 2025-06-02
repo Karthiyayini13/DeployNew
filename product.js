@@ -63,13 +63,19 @@ app.post('/upload', upload.single('image'), (req, res) => {
 });
 
 
-//LOGIN MAIN AND VERIFY MAIN CONNECTION
+// //LOGIN MAIN AND VERIFY MAIN CONNECTION
+// app.use('/loginMain',require('./LoginMain'));
+// app.use('/verifyMain',require('./VerifyMain'));
 
 
-app.use('/loginMain',require('./LoginMain'));
-app.use('/verifyMain',require('./VerifyMain'));
 
+// Import your routers
+const loginRouter = require('./LoginMain');
+const verifyRouter = require('./VerifyMain');
 
+// Use the routers
+app.use('/loginMain', loginRouter);
+app.use('/verifyMain', verifyRouter);
 
 
 // //RAZORPAY configuration / setup
@@ -421,17 +427,6 @@ app.get('/prodOrders/user/:userId', async (req, res) => {
     }
 });
 
-// // GET cart items for specific user
-// app.get('/cart/user/:userId', async (req, res) => {
-//     try {
-//         const cartItems = await CartModel.find({ userId: req.params.userId });
-//         res.json(cartItems);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// });
-
-
 // //UPDATE
 // POST route for creating orders
 //CREATION OF ORDER ID FOR ADMIN SIDE
@@ -457,65 +452,6 @@ const generateNextOrderId = async (prefix = 'AD') => {
         return `${prefix}${Date.now().toString().slice(-4)}`;
     }
 };
-
-
-// app.post('/prodOrders', async (req, res) => {
-//     try {
-//         if (!req.body.products || !Array.isArray(req.body.products) || req.body.products.length === 0) {
-//             return res.status(400).json({ message: 'At least one product is required' });
-//         }
-
-//         const prefix = req.body.status === "UserSideOrder" ? "US" : "AD";
-//         const orderId = await generateNextOrderId(prefix);
-       
-//         const products = req.body.products.map(product => {
-//             if (!product) {
-//                 throw new Error('Invalid product data');
-//             }
-            
-//             // Calculate booked dates if booking info exists
-//             let bookedDates = [];
-//             if (product.booking && product.booking.startDate && product.booking.endDate) {
-//                 bookedDates = generateDateRange(
-//                     new Date(product.booking.startDate),
-//                     new Date(product.booking.endDate)
-//                 );
-//             }
-            
-//             return {
-//                 ...product,
-//                 bookedDates,
-//                 booking: product.booking ? {
-//                     ...product.booking,
-//                     startDate: new Date(product.booking.startDate),
-//                     endDate: new Date(product.booking.endDate),
-//                     totalDays: bookedDates.length,
-//                     totalPrice: (product.price || 0) * bookedDates.length
-//                 } : null
-//             };
-//         });
-
-//         const newOrder = new prodOrderData({
-//             ...req.body,
-//             orderId: orderId,
-//             products: products,
-//             createdAt: new Date()
-//         });
-
-//         const savedOrder = await newOrder.save();
-//         res.status(201).json(savedOrder);
-//     } catch (err) {
-//         res.status(500).json({ 
-//             message: err.message || 'Failed to create order',
-//             error: true 
-//         });
-//     }
-// });
-
-
-
-
-
 
 
 // Helper function to generate date range
