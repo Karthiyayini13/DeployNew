@@ -1,9 +1,4 @@
 const mongoose = require('mongoose');
-// const SimilarProductSchema = new mongoose.Schema({
-//     Prodname: String,
-//     ProdCode: String,
-//     image: String
-//   }, { _id: false }); // prevent MongoDB from creating _id for nested
 const productSchema = new mongoose.Schema({
     name: String,
     description:String, // Update if you use
@@ -30,25 +25,6 @@ visible: {
         type: Boolean,
         default: true
     },
-
-    // similarProducts:{
-    //         type : [SimilarProductSchema],
-    //         validate:{
-    //             validator:function(v){
-    //                 return v.length >=4;
-    //             },
-    //             message:"At least 4 similar products are required"
-    //         }
-    // }
-    // similarProducts: [
-    //     {
-    //         Prodname: String,
-    //         ProdCode: String,
-    //         image: String
-    //     }
-    // ],
-
-
     similarProducts: {
         type: [{
             Prodname: String,
@@ -58,14 +34,7 @@ visible: {
             ProdPrintingCost:Number,
             ProdPrice:Number
         }],
-        // validate: {
-        //     validator: function(v) {
-        //         return v.length >= 4;
-        //     },
-        //     message: "At least 4 similar products are required"
-        // },
-
-        required: [true, "Similar products array is required"]
+      required: [true, "Similar products array is required"]
     }
 });
 const productModel = mongoose.model('Product', productSchema);

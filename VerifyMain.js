@@ -11,7 +11,6 @@ const router = express.Router()
 router.use(bodyParser.json());
 router.use(cors());
 
-
 const otpStore = {}; // Store OTPs temporarily
 
 // **Send OTP**
@@ -66,7 +65,6 @@ router.post('/verify-otp', (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
 });
-
 
 // At the end of LoginMain.js and VerifyMain.js
 module.exports = router;
