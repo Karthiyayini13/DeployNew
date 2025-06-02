@@ -17,10 +17,17 @@ const app = express();
 const PORT = 3001;
 
 
+// app.use(cors({
+//   origin: 'http://localhost:3000/',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+// With this:
 app.use(cors({
-  origin: 'http://localhost:3000/',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: 'http://localhost:3000', // Remove trailing slash
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true
 }));
 
 //Middlewares
@@ -54,13 +61,44 @@ const upload = multer({ storage });
 // });
 
 
-// Example backend upload route
-app.post('/upload', upload.single('image'), (req, res) => {
-    if (!req.file) return res.status(400).send("No file uploaded.");
+// // Example backend upload route
+// app.post('/upload', upload.single('image'), (req, res) => {
+//     if (!req.file) return res.status(400).send("No file uploaded.");
 
-    const imageUrl = `/images/${req.file.filename}`; // relative path for static serving
-    res.json({ imageUrl: imageUrl }); // OR use full URL: `http://localhost:3001/images/${req.file.filename}`
+//     const imageUrl = `/images/${req.file.filename}`; // relative path for static serving
+//     res.json({ imageUrl: imageUrl }); // OR use full URL: `http://localhost:3001/images/${req.file.filename}`
+// });
+// Update your upload route:
+app.post('/upload', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ 
+            success: false, 
+            message: "No file uploaded" 
+        });
+    }
+
+    try {
+        // Use full URL for the response
+        const imageUrl = `https://${req.get('host')}/images/${req.file.filename}`;
+        
+        res.json({ 
+            success: true, 
+            imageUrl: imageUrl 
+        });
+    } catch (err) {
+        console.error("Upload error:", err);
+        res.status(500).json({ 
+            success: false, 
+            message: "File upload failed",
+            error: err.message 
+        });
+    }
 });
+
+// Update this line in product.js:
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
+// And create the public/images directory if it doesn't exist
 
 
 // //LOGIN MAIN AND VERIFY MAIN CONNECTION
