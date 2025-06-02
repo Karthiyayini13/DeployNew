@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const mongoose = require('mongoose');
 const productData = require('./productSchema');
 const categoryData = require('./categorySchema');
@@ -22,83 +23,171 @@ const PORT = 3001;
 //   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 //   allowedHeaders: ['Content-Type', 'Authorization']
 // }));
-// With this:
-app.use(cors({
-  origin: 'http://localhost:3000', // Remove trailing slash
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-  credentials: true
-}));
+// app.use(cors({
+//   origin: 'http://localhost:3000', // Remove trailing slash
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+//   credentials: true
+// }));
 
-//Middlewares
-// app.use(cors());
+// // Enhanced CORS configuration
+// const corsOptions = {
+//   origin: ['http://localhost:3000', 'https://your-production-domain.com'],
+//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true
+// };
 
-// app.use('/verify',require('./LoginMain'))
-app.use(bodyParser.json());
-app.use("/images", express.static(path.join(__dirname, "../first-app/public/images")));
+// app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 
-// MongoDB connection
-//mongoose.connect("mongodb://127.0.0.1:27017/your-db-name");
+// //Middlewares
+// // app.use(cors());
 
-mongoose.connect("mongodb+srv://karthiyayinitg1312:Rb8gF80kB2lD5bsM@cluster0.6vythax.mongodb.net/newDb?retryWrites=true&w=majority&appName=Cluster0");
-//mongodb+srv://karthiyayinitg1312:<db_password>@cluster0.6vythax.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+// // app.use('/verify',require('./LoginMain'))
+// app.use(bodyParser.json());
+// app.use("/images", express.static(path.join(__dirname, "../first-app/public/images")));
 
-// Image upload with multercd
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../first-app/public/images'));
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
-const upload = multer({ storage });
+// // MongoDB connection
+// //mongoose.connect("mongodb://127.0.0.1:27017/your-db-name");
 
-// // Upload route
-// app.post('/upload', upload.single('image'), (req, res) => {
-//     const relativeImagePath = `/images/${filename}`;
-//     res.json({ imageUrl: relativeImagePath });
+// mongoose.connect("mongodb+srv://karthiyayinitg1312:Rb8gF80kB2lD5bsM@cluster0.6vythax.mongodb.net/newDb?retryWrites=true&w=majority&appName=Cluster0");
+// //mongodb+srv://karthiyayinitg1312:<db_password>@cluster0.6vythax.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+// // Image upload with multercd
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, path.join(__dirname, '../first-app/public/images'));
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, Date.now() + path.extname(file.originalname));
+//     },
 // });
+// const upload = multer({ storage });
+
+// // // Upload route
+// // app.post('/upload', upload.single('image'), (req, res) => {
+// //     const relativeImagePath = `/images/${filename}`;
+// //     res.json({ imageUrl: relativeImagePath });
+// // });
 
 
-// // Example backend upload route
+// // // Example backend upload route
+// // app.post('/upload', upload.single('image'), (req, res) => {
+// //     if (!req.file) return res.status(400).send("No file uploaded.");
+
+// //     const imageUrl = `/images/${req.file.filename}`; // relative path for static serving
+// //     res.json({ imageUrl: imageUrl }); // OR use full URL: `http://localhost:3001/images/${req.file.filename}`
+// // });
+// // Update your upload route:
 // app.post('/upload', upload.single('image'), (req, res) => {
-//     if (!req.file) return res.status(400).send("No file uploaded.");
+//     if (!req.file) {
+//         return res.status(400).json({ 
+//             success: false, 
+//             message: "No file uploaded" 
+//         });
+//     }
 
-//     const imageUrl = `/images/${req.file.filename}`; // relative path for static serving
-//     res.json({ imageUrl: imageUrl }); // OR use full URL: `http://localhost:3001/images/${req.file.filename}`
-// });
-// Update your upload route:
-app.post('/upload', upload.single('image'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ 
-            success: false, 
-            message: "No file uploaded" 
-        });
-    }
-
-    try {
-        // Use full URL for the response
-        const imageUrl = `https://${req.get('host')}/images/${req.file.filename}`;
+//     try {
+//         // Use full URL for the response
+//         const imageUrl = `https://${req.get('host')}/images/${req.file.filename}`;
         
-        res.json({ 
-            success: true, 
-            imageUrl: imageUrl 
-        });
-    } catch (err) {
-        console.error("Upload error:", err);
-        res.status(500).json({ 
-            success: false, 
-            message: "File upload failed",
-            error: err.message 
-        });
-    }
+//         res.json({ 
+//             success: true, 
+//             imageUrl: imageUrl 
+//         });
+//     } catch (err) {
+//         console.error("Upload error:", err);
+//         res.status(500).json({ 
+//             success: false, 
+//             message: "File upload failed",
+//             error: err.message 
+//         });
+//     }
+// });
+
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://deploynew-ev4v.onrender.com/upload'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Ensure upload directory exists
+const uploadDir = path.join(__dirname, 'public/images');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Configure multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
 });
 
-// Update this line in product.js:
-app.use("/images", express.static(path.join(__dirname, "public/images")));
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Only images (JPEG, PNG, GIF) are allowed'));
+  }
+}).single('image');
 
-// And create the public/images directory if it doesn't exist
+// Serve static files
+app.use('/images', express.static(uploadDir));
+
+// Upload endpoint with better error handling
+app.post('/upload', (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      console.error('Upload error:', err);
+      return res.status(400).json({
+        success: false,
+        message: err.message || 'File upload failed'
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded'
+      });
+    }
+
+    // Return the image URL - adjust this based on your deployment
+    const imageUrl = `/images/${req.file.filename}`;
+    
+    res.json({
+      success: true,
+      imageUrl: imageUrl,
+      message: 'File uploaded successfully'
+    });
+  });
+});
+
+
+
+
 
 
 // //LOGIN MAIN AND VERIFY MAIN CONNECTION
